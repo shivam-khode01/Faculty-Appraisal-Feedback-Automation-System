@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - Faculty Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      --info-gradient: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .icon-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    .icon-success {
+      background: var(--success-gradient);
+      color: white;
+    }
+    .icon-warning {
+      background: var(--warning-gradient);
+      color: white;
+    }
+
+    .faculty-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .faculty-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .rating-progress {
+      height: 8px;
+      border-radius: 10px;
+      background: #e9ecef;
+      overflow: hidden;
+    }
+
+    .rating-progress .progress-bar {
+      border-radius: 10px;
+      transition: width 0.8s ease;
+    }
+
+    .rating-badge {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .action-btn {
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      margin: 0.2rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-btn {
+      border-radius: 25px;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+    }
+
+    .header-btn.btn-generate {
+      background: var(--success-gradient);
+      border-color: transparent;
+    }
+
+    .header-btn.btn-comparison {
+      background: var(--info-gradient);
+      border-color: transparent;
+    }
+
+    .rating-input {
+      border-radius: 10px;
+      border: 2px solid #e9ecef;
+      padding: 0.5rem 0.75rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .rating-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .faculty-name {
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .faculty-designation {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .faculty-department {
+      font-size: 0.85rem;
+      color: #95a5a6;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .mobile-card {
+      display: none;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 25px;
+      padding: 0.5rem 1rem;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .search-box:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.1);
+    }
+
+    .department-filter {
+      background: white;
+      border-radius: 25px;
+      padding: 0.5rem 1rem;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+      max-width: 250px;
+    }
+
+    .department-filter:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    .table-responsive {
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      background: white;
+      overflow: hidden;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table th {
+      background: var(--dark-gradient);
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 1rem;
+    }
+
+    .table td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-color: #f8f9fa;
+    }
+
+    @media (max-width: 768px) {
+      .desktop-table {
+        display: none;
+      }
+
+      .mobile-card {
+        display: block;
+      }
+
+      .dashboard-header {
+        padding: 1.5rem 0;
+        margin-bottom: 1rem;
+      }
+
+      .stats-card {
+        margin-bottom: 1rem;
+      }
+
+      .faculty-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .header-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .header-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .floating-add-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--success-gradient);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .floating-add-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #7f8c8d;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: #bdc3c7;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="mb-0">
+            <i class="fas fa-users-cog me-3"></i>
+            Faculty Management Dashboard
+          </h1>
+          <p class="mb-0 mt-2 opacity-75">Manage and evaluate faculty performance</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end align-items-center">
+          <div class="header-controls d-flex align-items-center gap-3 flex-wrap">
+            <!-- Department Dropdown -->
+            <select id="deptSelect" class="form-select" style="max-width: 200px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); color: white;">
+              <option value="" disabled selected>Select Department</option>
+              <% 
+                const uniqueDepts = [...new Set(profiles.map(p => p.department).filter(Boolean))];
+                uniqueDepts.forEach(dept => { 
+              %>
+                <option value="<%= dept %>" style="color: #333;"><%= dept %></option>
+              <% }) %>
+            </select>
+
+            <!-- Generate Feedback Button -->
+            <button class="header-btn btn-generate" onclick="generateDepartmentFeedback()">
+              <i class="fas fa-magic"></i>
+              Generate Feedback
+            </button>
+
+            <!-- Comparison Dashboard Button -->
+            <a href="/admin/comparison-dashboard" class="header-btn btn-comparison">
+              <i class="fas fa-chart-bar"></i>
+              Comparison Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="stats-icon icon-primary">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="mb-1" id="totalFaculty"><%= profiles.length %></h3>
+          <p class="text-muted mb-0">Total Faculty</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="stats-icon icon-success">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3 class="mb-1" id="avgRating">
+            <%= (profiles.reduce((sum, p) => sum + parseFloat(p.autoRating), 0) / (profiles.length || 1)).toFixed(2) %>
+          </h3>
+          <p class="text-muted mb-0">Average Rating</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <div class="stats-icon icon-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3 class="mb-1" id="pendingReviews">
+            <%= profiles.filter((p) => p.adminRating === undefined).length %>
+          </h3>
+          <p class="text-muted mb-0">Pending Reviews</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Filter + Search Box -->
+    <div class="row mb-4 g-3">
+      <div class="col-md-4 col-12">
+        <select id="departmentFilter" class="department-filter form-select">
+          <option value="">All Departments</option>
+          <% 
+            // Get unique departments
+            const departments = [...new Set(profiles.map(p => p.department).filter(Boolean))];
+            departments.forEach(dept => { 
+          %>
+            <option value="<%= dept %>"><%= dept %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-md-8 col-12">
+        <input
+          type="text"
+          class="form-control search-box"
+          placeholder="🔍 Search faculty by name or designation..."
+          id="searchInput"
+        />
+      </div>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="desktop-table">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Faculty Details</th>
+              <th>Auto Rating</th>
+              <th>Admin Rating</th>
+              <th>Final Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="facultyTableBody">
+            <% if (profiles.length === 0) { %>
+            <tr><td colspan="5" class="text-center">No Faculty Profiles Found</td></tr>
+            <% } else { %>
+            <% profiles.forEach((profile) => { %>
+            <tr data-department="<%= profile.department ?? '' %>">
+              <td>
+                <div class="faculty-name"><%= profile.name %></div>
+                <div class="faculty-designation"><%= profile.designation %></div>
+                <% if(profile.department) { %>
+                <div class="faculty-department"><%= profile.department %></div>
+                <% } %>
+              </td>
+              <td>
+                <div class="rating-progress mb-2">
+                  <div class="progress-bar bg-info" style="width: <%= profile.autoRating * 10 %>%;"></div>
+                </div>
+                <span class="rating-badge bg-info text-white"><%= profile.autoRating %></span>
+              </td>
+              <td>
+                <form
+                  class="d-flex align-items-center"
+                  style="gap: 0.5rem;"
+                  action="/admin/rate/<%= profile._id %>"
+                  method="POST"
+                >
+                  <input
+                    type="number"
+                    class="form-control rating-input"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    name="adminRating"
+                    value="<%= profile.adminRating ?? '' %>"
+                    placeholder="0-10"
+                    style="width: 80px"
+                  />
+                  <button type="submit" class="btn btn-success action-btn">
+                    <i class="fas fa-save"></i>
+                  </button>
+                </form>
+              </td>
+              <td>
+                <span class="rating-badge bg-success text-white"><%= profile.finalRating ?? 'N/A' %></span>
+              </td>
+              <td>
+                <a href="/admin/profile/<%= profile._id %>" class="btn btn-primary action-btn">
+                  <i class="fas fa-eye me-1"></i>Preview
+                </a>
+                <form
+                  action="/admin/profile/<%= profile._id %>/delete"
+                  method="POST"
+                  style="display: inline"
+                  onsubmit="return confirm('Are you sure?')"
+                >
+                  <button type="submit" class="btn btn-danger action-btn">
+                    <i class="fas fa-trash me-1"></i>Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <% }); %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="mobile-card">
+      <% profiles.forEach((profile) => { %>
+      <div class="faculty-card" data-department="<%= profile.department ?? '' %>">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <div class="faculty-name"><%= profile.name %></div>
+            <div class="faculty-designation"><%= profile.designation %></div>
+            <% if(profile.department) { %>
+            <div class="faculty-department"><%= profile.department %></div>
+            <% } %>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="dropdown">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/admin/profile/<%= profile._id %>"
+                  ><i class="fas fa-eye me-2"></i>Preview</a
+                >
+              </li>
+              <li>
+                <form
+                  action="/admin/profile/<%= profile._id %>/delete"
+                  method="POST"
+                  onsubmit="return confirm('Are you sure?')"
+                >
+                  <button class="dropdown-item text-danger" type="submit">
+                    <i class="fas fa-trash me-2"></i>Delete
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-4">
+            <label class="form-label small text-muted">Auto Rating</label>
+            <div class="rating-progress mb-1">
+              <div class="progress-bar bg-info" style="width: <%= profile.autoRating * 10 %>%"></div>
+            </div>
+            <span class="rating-badge bg-info text-white"><%= profile.autoRating %></span>
+          </div>
+          <div class="col-4">
+            <label class="form-label small text-muted">Admin Rating</label>
+            <form action="/admin/rate/<%= profile._id %>" method="POST">
+              <input
+                type="number"
+                class="form-control rating-input form-control-sm"
+                min="0"
+                max="10"
+                step="0.1"
+                name="adminRating"
+                value="<%= profile.adminRating ?? '' %>"
+                placeholder="0-10"
+              />
+              <button type="submit" class="btn btn-success action-btn btn-sm mt-2 w-100">
+                <i class="fas fa-save me-1"></i>Save
+              </button>
+            </form>
+          </div>
+          <div class="col-4">
+            <label class="form-label small text-muted">Final Rating</label>
+            <div class="mt-1">
+              <span class="rating-badge bg-success text-white"><%= profile.finalRating ?? 'N/A' %></span>
+            </div>
+          </div>
+        </div>
+
+        <a href="/admin/profile/<%= profile._id %>" class="btn btn-primary action-btn w-100">
+          <i class="fas fa-eye"></i> Preview
+        </a>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Floating Add Button -->
+    <button
+      class="floating-add-btn d-md-none"
+      onclick="window.location.href='/profile/create'"
+      title="Add New Faculty"
+      aria-label="Add New Faculty"
+    >
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (() => {
+      const searchInput = document.getElementById('searchInput');
+      const departmentFilter = document.getElementById('departmentFilter');
+      const tableBody = document.getElementById('facultyTableBody');
+      const mobileCards = document.querySelectorAll('.mobile-card .faculty-card');
+
+      function normalizeText(text) {
+        return text.toLowerCase();
+      }
+
+      function filterFaculty() {
+        const searchTerm = normalizeText(searchInput.value.trim());
+        const selectedDept = departmentFilter.value;
+
+        // Filter desktop table rows
+        const rows = tableBody.querySelectorAll('tr');
+        rows.forEach((row) => {
+          const name = normalizeText(row.querySelector('.faculty-name')?.textContent || '');
+          const designation = normalizeText(row.querySelector('.faculty-designation')?.textContent || '');
+          const dept = row.getAttribute('data-department') || '';
+
+          const matchesSearch =
+            !searchTerm || name.includes(searchTerm) || designation.includes(searchTerm);
+          const matchesDept = !selectedDept || dept === selectedDept;
+
+          row.style.display = matchesSearch && matchesDept ? '' : 'none';
+        });
+
+        // Filter mobile cards
+        mobileCards.forEach((card) => {
+          const name = normalizeText(card.querySelector('.faculty-name')?.textContent || '');
+          const designation = normalizeText(card.querySelector('.faculty-designation')?.textContent || '');
+          const dept = card.getAttribute('data-department') || '';
+
+          const matchesSearch =
+            !searchTerm || name.includes(searchTerm) || designation.includes(searchTerm);
+          const matchesDept = !selectedDept || dept === selectedDept;
+
+          card.style.display = matchesSearch && matchesDept ? '' : 'none';
+        });
+      }
+
+      searchInput.addEventListener('input', filterFaculty);
+      departmentFilter.addEventListener('change', filterFaculty);
+    })();
+
+    async function generateDepartmentFeedback() {
+      const department = document.getElementById("deptSelect").value;
+      if (!department) return alert("Please select a department.");
+
+      try {
+        const res = await fetch(`/admin/department-feedback/${department}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (res.ok) {
+          // Redirect to the department feedbacks page
+          window.location.href = `/admin/department-feedbacks?department=${encodeURIComponent(department)}`;
+
+        } else {
+          const data = await res.json();
+          alert("❌ Error: " + (data.message || "Something went wrong."));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Failed to connect to server.");
+      }
+    }
+  </script>
+
+</body>
+</html>

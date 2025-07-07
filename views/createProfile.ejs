@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Faculty Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .entry-group {
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 15px;
+      margin-bottom: 15px;
+      background-color: #f8f9fa;
+    }
+    .section-header {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 0.375rem;
+      margin-bottom: 20px;
+      margin-top: 30px;
+    }
+  </style>
+  <script>
+    function addField(sectionId, fieldHtml) {
+      const section = document.getElementById(sectionId);
+      section.insertAdjacentHTML("beforeend", fieldHtml);
+    }
+
+    function removeField(button) {
+      const entryGroup = button.closest(".entry-group");
+      const section = entryGroup.parentElement;
+      const entryGroups = section.querySelectorAll(".entry-group");
+      if (entryGroups.length > 1) {
+        entryGroup.remove();
+      } else {
+        alert("At least one entry must remain. Clear the fields if you don't want to add any data.");
+      }
+    }
+
+    function validateForm() {
+      const name = document.querySelector('input[name="name"]').value.trim();
+      const hoursTaught = document.querySelector('input[name="hoursTaught"]').value;
+      const studentFeedback = document.querySelector('input[name="studentFeedback"]').value;
+      
+      if (!name) {
+        alert('Please enter faculty name');
+        return false;
+      }
+      
+      if (!hoursTaught || hoursTaught < 0) {
+        alert('Please enter valid hours taught');
+        return false;
+      }
+      
+      if (!studentFeedback || studentFeedback < 0 || studentFeedback > 10) {
+        alert('Please enter valid student feedback (0-10)');
+        return false;
+      }
+      
+      return true;
+    }
+
+    function cleanEmptyFields() {
+      // Remove empty fields before submission
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        if (!input.value || !input.value.trim()) {
+          input.removeAttribute('required');
+        }
+      });
+    }
+
+    function addPaper() {
+      const paperCount = document.querySelectorAll('#papersSection .entry-group').length + 1;
+      const paperHtml = `
+        <div class='entry-group'>
+          <div class='d-flex justify-content-between align-items-center mb-2'>
+            <h6 class='text-primary mb-0'>Paper ${paperCount}</h6>
+            <button type='button' class='btn btn-outline-danger btn-sm' onclick='removeField(this)'>
+              Remove
+            </button>
+          </div>
+          <div class='row'>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='papers-title' placeholder='Paper Title' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='papers-journal' placeholder='Journal Name' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <select class='form-select' name='papers-quartile'>
+                <option value=''>Choose Quartile</option>
+                <option value='Q1'>Q1</option>
+                <option value='Q2'>Q2</option>
+                <option value='Q3'>Q3</option>
+                <option value='Q4'>Q4</option>
+                <option value='Others'>Others</option>
+              </select>
+            </div>
+            <div class='col-md-6 mb-2'>
+              <input type='number' class='form-control' name='papers-year' placeholder='Year' min='1900' max='2025' />
+            </div>
+          </div>
+        </div>`;
+      addField('papersSection', paperHtml);
+    }
+
+    function addWorkshop() {
+      const workshopCount = document.querySelectorAll('#workshopsSection .entry-group').length + 1;
+      const workshopHtml = `
+        <div class='entry-group'>
+          <div class='d-flex justify-content-between align-items-center mb-2'>
+            <h6 class='text-primary mb-0'>Workshop ${workshopCount}</h6>
+            <button type='button' class='btn btn-outline-danger btn-sm' onclick='removeField(this)'>
+              Remove
+            </button>
+          </div>
+          <div class='row'>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='workshops-title' placeholder='Workshop Title' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='workshops-conducted' placeholder='Conducted By' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <select class='form-select' name='workshops-mode'>
+                <option value=''>Mode</option>
+                <option value='Online'>Online</option>
+                <option value='Offline'>Offline</option>
+                <option value='Hybrid'>Hybrid</option>
+              </select>
+            </div>
+          </div>
+        </div>`;
+      addField('workshopsSection', workshopHtml);
+    }
+
+    function addAward() {
+      const awardCount = document.querySelectorAll('#awardsSection .entry-group').length + 1;
+      const awardHtml = `
+        <div class='entry-group'>
+          <div class='d-flex justify-content-between align-items-center mb-2'>
+            <h6 class='text-primary mb-0'>Award ${awardCount}</h6>
+            <button type='button' class='btn btn-outline-danger btn-sm' onclick='removeField(this)'>
+              Remove
+            </button>
+          </div>
+          <div class='row'>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='awards-name' placeholder='Award Name' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <input type='text' class='form-control' name='awards-by' placeholder='Given By' />
+            </div>
+            <div class='col-md-6 mb-2'>
+              <input type='number' class='form-control' name='awards-year' placeholder='Year' min='1900' max='2025' />
+            </div>
+          </div>
+        </div>`;
+      addField('awardsSection', awardHtml);
+    }
+  </script>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Create Faculty Profile</h2>
+          </div>
+          <div class="card-body">
+            <form action="/profile/create" method="POST" onsubmit="cleanEmptyFields(); return validateForm();">
+              <!-- Basic Info -->
+              <div class="section-header">
+                <h5 class="mb-0">Basic Information</h5>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Name *</label>
+                  <input type="text" class="form-control" name="name" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Designation *</label>
+                  <select class="form-select" name="designation" required>
+                    <option value="">Choose...</option>
+                    <option value="Assistant Professor">Assistant Professor</option>
+                    <option value="Associate Professor">Associate Professor</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Senior Professor">Senior Professor</option>
+                    <option value="PhD Student">PhD Student</option>
+                    <option value="HOD">HOD</option>
+                    <option value="Lecturer">Lecturer</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+  <label class="form-label">Department *</label>
+  <select class="form-select" name="department" required>
+    <option value="">Choose Department...</option>
+    <option value="Computer Science">SOC</option>
+    <option value="Mechanical Engineering">SOE</option>
+    <option value="Electrical Engineering">VEDIC-SCIENCE</option>
+    <option value="Civil Engineering">MITCOM</option>
+    <option value="Electronics">DESIGN</option>
+    <option value="Mathematics">ISBJ</option>
+  </select>
+</div>
+              </div>
+<div class="col-md-6 mb-3">
+  <label class="form-label">Domain *</label>
+  <select class="form-select" name="domain" required>
+    <option value="">Choose Domain...</option>
+    <option value="AIA">AIA</option>
+    <option value="Cybersecurity">Cybersecurity</option>
+    <option value="Big Data">Big Data</option>
+    <option value="AIEC">AIEC</option>
+    <option value="Cloud Computing">Cloud Computing</option>
+    <option value="Core">Core (Software Engineering)</option>
+  </select>
+</div>
+
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Expected Study Hours</label>
+                  <input type="number" class="form-control" name="expectedHours" value="20" readonly />
+                  <small class="text-muted">Standard expected hours per week</small>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Hours Taught *</label>
+                  <input type="number" class="form-control" name="hoursTaught" required min="0" max="200" />
+                  <small class="text-muted">Total hours taught this period</small>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Student Feedback (out of 10) *</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="studentFeedback"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    required
+                  />
+                  <small class="text-muted">Average student rating</small>
+                </div>
+              </div>
+
+              <!-- Dynamic Papers Section -->
+              <div class="section-header">
+                <h5 class="mb-0">Research Papers</h5>
+              </div>
+              <div id="papersSection">
+                <div class="entry-group">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="text-primary mb-0">Paper 1</h6>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeField(this)">
+                      Remove
+                    </button>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="papers-title"
+                        placeholder="Paper Title"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="papers-journal"
+                        placeholder="Journal Name"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <select class="form-select" name="papers-quartile">
+                        <option value="">Choose Quartile</option>
+                        <option value="Q1">Q1</option>
+                        <option value="Q2">Q2</option>
+                        <option value="Q3">Q3</option>
+                        <option value="Q4">Q4</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="papers-year"
+                        placeholder="Year"
+                        min="1900"
+                        max="2025"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-primary mb-4" onclick="addPaper()">
+                + Add Paper
+              </button>
+
+              <!-- Dynamic Workshops -->
+              <div class="section-header">
+                <h5 class="mb-0">Workshops Attended</h5>
+              </div>
+              <div id="workshopsSection">
+                <div class="entry-group">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="text-primary mb-0">Workshop 1</h6>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeField(this)">
+                      Remove
+                    </button>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="workshops-title"
+                        placeholder="Workshop Title"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="workshops-conducted"
+                        placeholder="Conducted By"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <select class="form-select" name="workshops-mode">
+                        <option value="">Mode</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Hybrid">Hybrid</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-primary mb-4" onclick="addWorkshop()">
+                + Add Workshop
+              </button>
+
+              <!-- Dynamic Awards -->
+              <div class="section-header">
+                <h5 class="mb-0">Awards & Recognition</h5>
+              </div>
+              <div id="awardsSection">
+                <div class="entry-group">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="text-primary mb-0">Award 1</h6>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeField(this)">
+                      Remove
+                    </button>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="awards-name"
+                        placeholder="Award Name"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input type="text" class="form-control" name="awards-by" placeholder="Given By" />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="awards-year"
+                        placeholder="Year"
+                        min="1900"
+                        max="2025"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-primary mb-4" onclick="addAward()">
+                + Add Award
+              </button>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-secondary me-md-2" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit Profile</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

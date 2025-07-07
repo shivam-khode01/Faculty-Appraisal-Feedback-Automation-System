@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile Preview</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .rating-card { position: sticky; top: 20px; }
+    .paper-item, .workshop-item, .award-item { transition: all 0.2s ease; }
+    .paper-item:hover, .workshop-item:hover, .award-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+    .progress { height: 8px; }
+    .section-header {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+    }
+    .feedback-box {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Faculty Profile - <%= teacher.name %></h2>
+      <a href="/admin/profiles" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Basic Information -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header section-header">
+          <h4 class="mb-0">Basic Information</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Designation:</strong> <%= teacher.designation %></p>
+              <p><strong>Department:</strong> <%= teacher.department %></p>
+              <p><strong>Domain:</strong> <%= teacher.domain %></p>
+              <p><strong>Expected Study Hours:</strong> <%= teacher.expectedHours %> hours/week</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Hours Taught:</strong> <%= teacher.hoursTaught %> hours</p>
+              <p><strong>Student Feedback:</strong> <%= teacher.feedback %> / 10</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper Publications -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header section-header">
+          <h4 class="mb-0">Paper Publications</h4>
+        </div>
+        <div class="card-body">
+          <% teacher.papers.forEach((paper, index) => { %>
+            <div class="mb-3 p-3 border rounded paper-item">
+              <h6 class="text-primary mb-2">Paper <%= index + 1 %></h6>
+              <ul class="list-unstyled mb-0">
+                <li><strong>Title:</strong> <%= paper.title %></li>
+                <li><strong>Journal Corpus:</strong> <%= paper.journalCorpus %></li>
+                <li><strong>Quartile:</strong> <%= paper.quartile %></li>
+                <li><strong>Year:</strong> <%= paper.year %></li>
+              </ul>
+            </div>
+          <% }) %>
+          <div class="text-center mt-3">
+            <small class="text-muted">Total Publications: <%= teacher.papers.length %></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop Details -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header section-header">
+          <h4 class="mb-0">Workshop Details</h4>
+        </div>
+        <div class="card-body">
+          <% teacher.workshops.forEach((ws, index) => { %>
+            <div class="mb-3 p-3 border rounded workshop-item">
+              <h6 class="text-primary mb-2">Workshop <%= index + 1 %></h6>
+              <ul class="list-unstyled mb-0">
+                <li><strong>Title:</strong> <%= ws.title %></li>
+                <li><strong>Conducted By:</strong> <%= ws.conductedBy %></li>
+                <li><strong>Mode:</strong> <%= ws.mode %></li>
+              </ul>
+            </div>
+          <% }) %>
+          <div class="text-center mt-3">
+            <small class="text-muted">Total Workshops: <%= teacher.workshops.length %></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Award Details -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header section-header">
+          <h4 class="mb-0">Awards & Recognition</h4>
+        </div>
+        <div class="card-body">
+          <% teacher.awards.forEach((award, index) => { %>
+            <div class="mb-3 p-3 border rounded award-item">
+              <h6 class="text-primary mb-2">Award <%= index + 1 %></h6>
+              <ul class="list-unstyled mb-0">
+                <li><strong>Name:</strong> <%= award.name %></li>
+                <li><strong>Given By:</strong> <%= award.by %></li>
+                <li><strong>Year:</strong> <%= award.year %></li>
+              </ul>
+            </div>
+          <% }) %>
+          <div class="text-center mt-3">
+            <small class="text-muted">Total Awards: <%= teacher.awards.length %></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Generated Feedback -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header section-header">
+          <h4 class="mb-0">AI-Generated Feedback</h4>
+        </div>
+        <div class="card-body">
+          <div class="feedback-box"><%= feedback.replace(/\*\*/g, '')
+  .replace(/\*/g, '')
+  .trim()  %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ratings Sidebar -->
+    <div class="col-md-4">
+      <div class="card shadow-sm rating-card">
+        <div class="card-header section-header">
+          <h4 class="mb-0">Performance Ratings</h4>
+        </div>
+        <div class="card-body">
+          <!-- Auto Rating -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Auto-calculated Rating:</label>
+            <div class="progress mb-2">
+              <div class="progress-bar bg-info" role="progressbar"
+                style="width: <%= autoRating * 10 %>%;" aria-valuenow="<%= autoRating %>"
+                aria-valuemin="0" aria-valuemax="10"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-info fs-6"><%= autoRating %> / 10</span>
+              <small class="text-muted">Based on metrics</small>
+            </div>
+          </div>
+
+          <!-- Admin Rating -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Admin Rating:</label>
+            <div class="progress mb-2">
+              <div class="progress-bar bg-warning" role="progressbar"
+                style="width: <%= adminRating * 10 %>%;" aria-valuenow="<%= adminRating %>"
+                aria-valuemin="0" aria-valuemax="10"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-warning fs-6"><%= adminRating %> / 10</span>
+              <small class="text-muted">Manual review</small>
+            </div>
+          </div>
+
+          <!-- Final Rating -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Final Rating:</label>
+            <div class="progress mb-2">
+              <div class="progress-bar bg-success" role="progressbar"
+                style="width: <%= finalRating * 10 %>%;" aria-valuenow="<%= finalRating %>"
+                aria-valuemin="0" aria-valuemax="10"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-success fs-6"><%= finalRating %> / 10</span>
+              <small class="text-muted">Weighted average</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="mt-4 text-center">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-outline-primary" onclick="window.print()">Print</button>
+      <button type="button" class="btn btn-outline-secondary" onclick="alert('Export PDF functionality goes here')">Export PDF</button>
+      <button type="button" class="btn btn-outline-info" onclick="alert('Edit profile functionality goes here')">Edit</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
